@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DndTrackerApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+08d8411f4ef8ef980f0bac76be5faa5c355d1e6a")]
 [assembly: System.Reflection.AssemblyProductAttribute("DndTrackerApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DndTrackerApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

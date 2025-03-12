@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DndTrackerApp.Models;
+using DndTrackerApp.ViewModels;
 
 namespace DndTrackerApp
 {
@@ -22,7 +23,16 @@ namespace DndTrackerApp
         // Returns a list of all DndTracker objects in the database.
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DndTracker.ToListAsync());
+            var viewModelList = new List<DndTrackerViewModel>();
+            var dndTrackerList = await _context.DndTracker.ToListAsync();
+            if(dndTrackerList.Count > 0)
+            {
+                foreach (var dndTracker in dndTrackerList)
+                {
+                    viewModelList.Add(DndTrackerViewModel.ConvertToViewModel(dndTracker));
+                }
+            }
+            return View(viewModelList);
         }
 
         // GET: DndTracker/Details/{id}
@@ -30,17 +40,24 @@ namespace DndTrackerApp
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
-                return BadRequest();
+                return View("Error", new ErrorViewModel { Message = "No ID provided." });
 
-            var dndTracker = await _context.DndTracker
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (dndTracker == null)
+            try
             {
-                return NotFound();
-            }
+                var dndTracker = await _context.DndTracker.FirstOrDefaultAsync(m => m.Id == id);
 
-            return View(dndTracker);
+                if (dndTracker == null)
+                    return View("Error", new ErrorViewModel { Message = "No object found with that ID." });
+
+                var viewModel = DndTrackerViewModel.ConvertToViewModel(dndTracker);
+
+                return View(viewModel);
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { 
+                    Message = "An error occurred while fetching details: " + e.Message });
+            }
         }
 
         // GET: DndTracker/Create
@@ -54,63 +71,78 @@ namespace DndTrackerApp
         // Creates a new DndTracker object in the database.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CharacterName,CharacterClass,CharacterLevel,CurrentXp,ActiveCampaign,SessionOneDate,LastSessionDate,CreatedAt,UpdatedAt")] DndTracker dndTracker)
+        public async Task<IActionResult> Create([Bind("CharacterName,CharacterClass,CharacterLevel,CurrentXp,ActiveCampaign,SessionOneDate,LastSessionDate,CreatedAt,UpdatedAt")] DndTrackerViewModel viewModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    var dndTracker = DndTrackerViewModel.ConvertToModel(viewModel);
+
                     dndTracker.Id = Guid.NewGuid();
+                    dndTracker.CreatedAt = DateTime.Now;
+                    dndTracker.UpdatedAt = DateTime.Now;
                     _context.Add(dndTracker);
                     await _context.SaveChangesAsync();
+
                     return RedirectToAction(nameof(Index));
                 }
-                return View(dndTracker);
+                return View();
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return View("Error", new ErrorViewModel { 
+                    Message = "An error occurred while creating the object: " + e.Message });
             }
         }
 
         // GET: DndTracker/Edit/{id}
+        // Returns the form to edit an existing DndTracker object.
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
+                return View("Error", new ErrorViewModel { Message = "No ID provided." });
 
-            var dndTracker = await _context.DndTracker.FindAsync(id);
-            if (dndTracker == null)
+            try 
             {
-                return NotFound();
+                var dndTracker = await _context.DndTracker.FindAsync(id);
+
+                if (dndTracker == null)
+                    return View("Error", new ErrorViewModel { Message = "No object found with that ID." });
+                    
+                var viewModel = DndTrackerViewModel.ConvertToViewModel(dndTracker);
+
+                return View(viewModel);
             }
-            return View(dndTracker);
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { 
+                    Message = "An error occurred while fetching details: " + e.Message });
+            }
         }
 
         // POST: DndTracker/Edit/{id}
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Edits an existing DndTracker object in the database.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CharacterName,CharacterClass,CharacterLevel,CurrentXp,ActiveCampaign,SessionOneDate,LastSessionDate,CreatedAt,UpdatedAt")] DndTracker dndTracker)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,CharacterName,CharacterClass,CharacterLevel,CurrentXp,ActiveCampaign,SessionOneDate,LastSessionDate,CreatedAt,UpdatedAt")] DndTrackerViewModel viewModel)
         {
-            if (id != dndTracker.Id)
-            {
-                return NotFound();
-            }
+            if (id != viewModel.Id)
+                return View("Error", new ErrorViewModel { Message = "No object found with that ID." });
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var dndTracker = DndTrackerViewModel.ConvertToModel(viewModel);
+                    dndTracker.UpdatedAt = DateTime.Now;
+
                     _context.Update(dndTracker);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DndTrackerExists(dndTracker.Id))
+                    if (!DndTrackerExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -121,40 +153,57 @@ namespace DndTrackerApp
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(dndTracker);
+            return View(viewModel);
         }
 
         // GET: DndTracker/Delete/{id}
+        // Returns the form to delete an existing DndTracker object.
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
+                return View("Error", new ErrorViewModel { Message = "No object found with that ID." });
 
-            var dndTracker = await _context.DndTracker
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (dndTracker == null)
+            try
             {
-                return NotFound();
-            }
+                var dndTracker = await _context.DndTracker.FirstOrDefaultAsync(m => m.Id == id);
 
-            return View(dndTracker);
+                if (dndTracker == null)
+                    return View("Error", new ErrorViewModel { Message = "No object found with that ID." });
+
+                var viewModel = DndTrackerViewModel.ConvertToViewModel(dndTracker);
+
+                return View(viewModel);
+
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { 
+                    Message = "An error occurred while fetching details: " + e.Message });
+            }
         }
 
         // POST: DndTracker/Delete/{id}
+        // Deletes an existing DndTracker object from the database.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var dndTracker = await _context.DndTracker.FindAsync(id);
-            if (dndTracker != null)
+            try 
             {
-                _context.DndTracker.Remove(dndTracker);
-            }
+                var dndTracker = await _context.DndTracker.FindAsync(id);
+                if (dndTracker != null)
+                {
+                    _context.DndTracker.Remove(dndTracker);
+                }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { 
+                    Message = "An error occurred while deleting the object: " + e.Message });
+            }
         }
 
         private bool DndTrackerExists(Guid id)

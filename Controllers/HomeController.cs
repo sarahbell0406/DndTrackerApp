@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using DndTrackerApp.Models;
+using DndTrackerApp.ViewModels;
 
 namespace DndTrackerApp.Controllers;
 

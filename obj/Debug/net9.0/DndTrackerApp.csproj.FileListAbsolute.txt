@@ -338,3 +338,4 @@ C:\Users\sarah\DndTrackerApp\obj\Debug\net9.0\refint\DndTrackerApp.dll
 C:\Users\sarah\DndTrackerApp\obj\Debug\net9.0\DndTrackerApp.pdb
 C:\Users\sarah\DndTrackerApp\obj\Debug\net9.0\DndTrackerApp.genruntimeconfig.cache
 C:\Users\sarah\DndTrackerApp\obj\Debug\net9.0\ref\DndTrackerApp.dll
+C:\Users\sarah\DndTrackerApp\obj\Debug\net9.0\DndTrackerApp.sourcelink.json
