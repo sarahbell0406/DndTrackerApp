@@ -1,0 +1,71 @@
+@model IEnumerable<DndTrackerApp.Models.DndTracker>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CharacterName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CharacterClass)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CharacterLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrentXp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActiveCampaign)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SessionOneDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastSessionDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CharacterName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CharacterClass)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CharacterLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentXp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActiveCampaign)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SessionOneDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastSessionDate)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

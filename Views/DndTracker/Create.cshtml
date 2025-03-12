@@ -1,0 +1,63 @@
+@model DndTrackerApp.Models.DndTracker
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>DndTracker</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CharacterName" class="control-label"></label>
+                <input asp-for="CharacterName" class="form-control" />
+                <span asp-validation-for="CharacterName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CharacterClass" class="control-label"></label>
+                <input asp-for="CharacterClass" class="form-control" />
+                <span asp-validation-for="CharacterClass" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CharacterLevel" class="control-label"></label>
+                <input asp-for="CharacterLevel" class="form-control" />
+                <span asp-validation-for="CharacterLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrentXp" class="control-label"></label>
+                <input asp-for="CurrentXp" class="form-control" />
+                <span asp-validation-for="CurrentXp" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveCampaign" /> @Html.DisplayNameFor(model => model.ActiveCampaign)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="SessionOneDate" class="control-label"></label>
+                <input asp-for="SessionOneDate" class="form-control" />
+                <span asp-validation-for="SessionOneDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastSessionDate" class="control-label"></label>
+                <input asp-for="LastSessionDate" class="form-control" />
+                <span asp-validation-for="LastSessionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
